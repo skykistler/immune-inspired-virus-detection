@@ -48,8 +48,8 @@ public class Sterilizer {
 			int characteristics = st.getHeader(i).getCharacteristics();
 			String name = st.getHeader(i).getName().toLowerCase();
 			if ((characteristics & 0xFF) == 0x20 || name.contains("data")) {
-				System.out.println(name);
-				System.out.println(Integer.toHexString(characteristics));
+				// System.out.println(name);
+				// System.out.println(Integer.toHexString(characteristics));
 				fos.write(st.getSection(i).getData());
 			}
 		}
