@@ -7,7 +7,7 @@ public class Main {
 		System.out.println("Helo viruzssz! prepair 2 DIE");
 
 		Sterilizer s = new Sterilizer();
-		// s.sterilizeFolder("viruses");
+		s.sterilizeFolder("viruses");
 
 		s.sterilizeFolder("win_xp_benign");
 
