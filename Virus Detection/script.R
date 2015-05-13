@@ -1,5 +1,4 @@
 # install.packages('deepnet')
-# install.packages('data.table')
 library('deepnet')
 
 virus.list <- list.files(path='viruses_sterilized', full.names=TRUE)

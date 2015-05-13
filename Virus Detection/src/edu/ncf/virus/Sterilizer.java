@@ -1,12 +1,14 @@
 package edu.ncf.virus;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.boris.pecoff4j.PE;
-import org.boris.pecoff4j.SectionTable;
-import org.boris.pecoff4j.io.PEParser;
+import com.github.katjahahn.parser.PEData;
+import com.github.katjahahn.parser.PELoader;
+import com.github.katjahahn.parser.sections.SectionHeader;
+import com.github.katjahahn.parser.sections.SectionTable;
 
 public class Sterilizer {
 	File virus_folder = null;
@@ -39,19 +41,29 @@ public class Sterilizer {
 	}
 
 	public void sterilizeVirus(File f, File writeto) throws IOException {
-		PE pe = PEParser.parse(f);
 		File sterilized = new File(writeto.getAbsolutePath() + "/" + f.getName());
 		FileOutputStream fos = new FileOutputStream(sterilized);
-		SectionTable st = pe.getSectionTable();
-		int sections = st.getNumberOfSections();
-		for (int i = 0; i < sections; i++) {
-			int characteristics = st.getHeader(i).getCharacteristics();
-			String name = st.getHeader(i).getName().toLowerCase();
-			if ((characteristics & 0xFF) == 0x20) {
-				System.out.println(name);
-				System.out.println(Integer.toHexString(characteristics));
-				fos.write(st.getSection(i).getData());
+		try {
+			FileInputStream fis = new FileInputStream(f);
+			PEData pe = PELoader.loadPE(f);
+			SectionTable st = pe.getSectionTable();
+			int sections = st.getNumberOfSections();
+			for (int i = 1; i <= sections; i++) {
+				String name = st.getSectionHeader(i).getName().toLowerCase();
+				if (name.equals(".data") || name.contains("text") || name.contains("code") || name.equals("data")) {
+					SectionHeader s = st.getSectionHeader(i);
+					byte[] section = new byte[(int) s.getAlignedSizeOfRaw()];
+					fis.read(section, (int) s.getAlignedPointerToRaw(), (int) s.getAlignedSizeOfRaw());
+					fos.write(section);
+				}
 			}
+			fis.close();
+		} catch (Exception e) {
+			FileInputStream fis = new FileInputStream(f);
+			int b;
+			while ((b = fis.read()) != -1)
+				fos.write(b);
+			fis.close();
 		}
 		fos.flush();
 		fos.close();

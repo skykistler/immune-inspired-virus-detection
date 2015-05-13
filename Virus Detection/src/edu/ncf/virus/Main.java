@@ -10,6 +10,5 @@ public class Main {
 		s.sterilizeFolder("viruses");
 
 		s.sterilizeFolder("win_xp_benign");
-
 	}
 }
