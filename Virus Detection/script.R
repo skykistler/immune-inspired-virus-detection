@@ -33,12 +33,12 @@ rm(i)
 
 rm(virus.data)
 rm(benign.data)
-save.image("~/git/immune-inspired-virus-detection/Virus Detection/calculated_ngrams.RData")
+
+# save.image("~/git/immune-inspired-virus-detection/Virus Detection/calculated_ngrams.RData")
 
 data <- as.matrix(do.call(rbind, do.call(c, list(virus.ngrams, benign.ngrams))))
 data <- apply(data, c(1,2), hashCode)
 type <- as.matrix(do.call(c, list(rep(1, length(virus.ngrams)), rep(0, length(benign.ngrams)))))
-
 data <- cbind(data, type)
 data <- data[sample(nrow(data)),]
 
@@ -47,3 +47,5 @@ numTest <- 100
 
 dnn <- dbn.dnn.train(data[1:numTrain,1:10], data[1:numTrain,11], hidden=c(5))
 nn.test(dnn, data[(numTrain + 1):(numTrain+numTest),1:10], data[(numTrain + 1):(numTrain+numTest),11])
+
+# save.image("~/git/immune-inspired-virus-detection/Virus Detection/final.RData")
